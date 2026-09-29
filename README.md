@@ -136,7 +136,7 @@ For a complete optimized graphics stack on **AMD Zen (x86-64-v3/v4)**:
 
 ## Important
 
-- Builds are compiled on **Arch Linux** (multilib) against llvm-mingw. The resulting DLLs are Windows PE files that run inside any Wine 8.0+ or Proton 8.0+ prefix, regardless of the host distribution.
+- Builds are compiled on **Arch Linux**. The resulting DLLs are Windows PE files that run inside any Wine 8.0+ or Proton 8.0+ prefix, regardless of the host distribution.
 - Builds are **not signed**. Verify integrity using SHA-256 from the release description.
 - **Do not use v4 builds** if you are unsure about AVX-512 support. Use v3 if your CPU has only AVX2.
 - VKD3D-Proton manipulation in online multiplayer games may be considered cheating. **Use at your own risk.**
