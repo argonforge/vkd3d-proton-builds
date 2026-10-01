@@ -151,7 +151,7 @@ jobs:
           FLAGS=(--latest)
           [[ $DRAFT = true ]] && FLAGS=(--draft)
 
-          TITLE="VKD3D-Proton ${VKD3D_VERSION} (Clang)"
+          TITLE="${VKD3D_VERSION} (Clang)"
           [[ $DRAFT = true ]] && TITLE="[DRAFT] $TITLE"
 
           ls -lh artifacts/
