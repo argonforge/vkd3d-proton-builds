@@ -28,12 +28,41 @@ init_bash_helpers || exit 1
 INTERACTIVE=1
 
 REPO_ROOT=$(git rev-parse --show-toplevel) || exit 1
+CONFIG="$REPO_ROOT/.typos.toml"
+FLAGS="-c $CONFIG $REPO_ROOT"
+PIPE_FLAGS="-c $CONFIG -"
 
-[[ -f "$REPO_ROOT/.typos.toml" ]] || {
+[[ -f "$CONFIG" ]] || {
 	error "Typos config not found"
 	exit 1
 }
 
-# check typos
-typos --config "$REPO_ROOT/.typos.toml" "$REPO_ROOT"
-status 'Typos check' $?
+# check project typos
+typos ${FLAGS}
+status 'Project typos' $? || exit 1
+
+# commit typos check
+result=0
+while read -r local_ref local_sha remote_ref remote_sha; do
+	# branch delete
+	[[ "$local_sha" =~ ^0+$ ]] && continue
+
+	if [[ "$remote_sha" =~ ^0+$ ]]; then
+		range=( "$local_sha" --not --remotes="$1" )
+	else
+		range="$remote_sha..$local_sha"
+	fi
+
+	while IFS= read -r message; do
+		[[ -z "$message" ]] && continue
+
+		if ! printf "%s\n" "$message" | typos ${PIPE_FLAGS} ; then
+			error "Typos in commit message: '$message'"
+			result=1
+		fi
+	done < <(git log "${range[@]}" --pretty=format:%s%n)
+done
+
+[[ $result -eq 0 ]] && status "Commit typos" OK
+
+exit $result
